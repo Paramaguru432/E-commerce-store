@@ -1,0 +1,58 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <meta name="description" content="A simple, friendly online store demo built with Django.">
+  <title>{% block title %}Nest & Nova Store{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <script defer src="{% static 'js/app.js' %}"></script>
+</head>
+<body>
+  <div class="top-strip">A little something for your everyday ✨ <span>Demo store · Cash on delivery</span></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{% url 'home' %}" aria-label="Nest and Nova Store home">
+        <span class="brand-mark">N<span>✦</span></span>
+        <span><strong>Nest<span class="brand-amp"> & </span>Nova</strong><small>THE EVERYDAY STORE</small></span>
+      </a>
+      <form class="nav-search" action="{% url 'home' %}" method="get" role="search">
+        <span aria-hidden="true">⌕</span>
+        <input name="q" value="{{ query|default:'' }}" placeholder="Search products..." aria-label="Search products">
+        <button type="submit">Search</button>
+      </form>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="{% url 'home' %}#shop">Shop</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'order_history' %}">My orders</a>
+          <span class="nav-user">Hi, {{ user.first_name|default:user.username|truncatechars:12 }}</span>
+          <form class="inline-form" action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="text-button" type="submit">Log out</button></form>
+        {% else %}
+          <a href="{% url 'login' %}">Log in</a>
+        {% endif %}
+        <a class="cart-link" href="{% url 'cart' %}" aria-label="Shopping cart">Bag <span class="cart-count">{{ cart_item_count }}</span></a>
+      </nav>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="container messages" aria-live="polite">
+      {% for message in messages %}<div class="message message-{{ message.tags|default:'info' }}"><span>{{ message }}</span><button type="button" class="message-close" aria-label="Dismiss message">×</button></div>{% endfor %}
+    </div>
+  {% endif %}
+
+  <main>{% block content %}{% endblock %}</main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><a class="brand brand-light" href="{% url 'home' %}"><span class="brand-mark">N<span>✦</span></span><span><strong>Nest<span class="brand-amp"> & </span>Nova</strong><small>THE EVERYDAY STORE</small></span></a><p>Thoughtful finds for your everyday life.</p></div>
+      <div><h3>Explore</h3><a href="{% url 'home' %}#shop">All products</a><a href="{% url 'cart' %}">Shopping bag</a><a href="{% url 'order_history' %}">Order history</a></div>
+      <div><h3>Good to know</h3><p>Secure account login</p><p>Simple order tracking</p><p>Cash on delivery demo</p></div>
+      <div class="footer-note"><span>Made for everyday moments</span><div>♡</div></div>
+    </div>
+    <div class="container footer-bottom"><span>© {% now "Y" %} Nest & Nova Store</span><span>Built with Django · Learning project</span></div>
+  </footer>
+</body>
+</html>

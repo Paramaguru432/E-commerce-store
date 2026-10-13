@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Nest & Nova — Everyday finds, thoughtfully picked{% endblock %}
+{% block content %}
+<section class="hero container">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="eyebrow-line"></span> LITTLE THINGS, BIG JOY</div>
+    <h1>Find your next<br><em>everyday favourite.</em></h1>
+    <p>Discover useful, feel-good finds for your desk, your home, and everywhere in between.</p>
+    <a class="button button-dark" href="#shop">Explore the collection <span>↗</span></a>
+    <div class="hero-proof"><span class="proof-avatars"><b>☺</b><b>✦</b><b>♡</b></span><span><strong>Curated with care</strong><small>Simple finds. Happy days.</small></span></div>
+  </div>
+  <div class="hero-art" aria-label="Decorative product display">
+    <div class="hero-art-sun"></div><div class="hero-art-tag">THE DAILY EDIT <span>✦</span></div>
+    <div class="hero-art-orbit orbit-one"></div><div class="hero-art-orbit orbit-two"></div>
+    <div class="hero-product hero-product-one"><span>🎧</span><small>LISTEN WELL</small></div>
+    <div class="hero-product hero-product-two"><span>☕</span><small>SLOW MORNINGS</small></div>
+    <div class="hero-product hero-product-three"><span>👜</span><small>TAKE IT ALONG</small></div>
+    <div class="hero-art-sticker">GOOD<br>THINGS<br>INSIDE <b>↘</b></div>
+    <div class="hero-art-bottom">A LITTLE JOY, DELIVERED.</div>
+  </div>
+</section>
+
+<section class="benefit-band">
+  <div class="container benefit-grid">
+    <div><span>✦</span><p><strong>Thoughtful picks</strong><small>Everyday essentials</small></p></div>
+    <div><span>♧</span><p><strong>Easy shopping</strong><small>A smooth checkout</small></p></div>
+    <div><span>♡</span><p><strong>Made for you</strong><small>Little things, big joy</small></p></div>
+    <div><span>↗</span><p><strong>Order with ease</strong><small>Track your purchases</small></p></div>
+  </div>
+</section>
+
+<section class="container shop-section" id="shop">
+  <div class="section-heading">
+    <div><div class="eyebrow">THE COLLECTION</div><h2>{% if query %}Search results{% else %}Good finds for <em>good days.</em>{% endif %}</h2><p>{% if query %}Showing matches for “{{ query }}”.{% else %}A few things we think you’ll love.{% endif %}</p></div>
+    <span class="result-count">{{ products|length }} product{{ products|length|pluralize }}</span>
+  </div>
+  <div class="filter-row">
+    <a class="filter-chip {% if not selected_category %}active{% endif %}" href="{% url 'home' %}{% if query %}?q={{ query|urlencode }}{% endif %}">All finds</a>
+    {% for value,label in categories %}
+      <a class="filter-chip {% if selected_category == value %}active{% endif %}" href="?category={{ value|urlencode }}{% if query %}&q={{ query|urlencode }}{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <div class="product-grid">
+    {% for product in products %}
+      <article class="product-card">
+        <a class="product-art art-{{ product.category|slugify }}" href="{% url 'product_detail' product.slug %}" aria-label="View {{ product.name }}">
+          {% if product.featured %}<span class="product-badge">OUR PICK</span>{% endif %}
+          <span class="product-emoji" aria-hidden="true">{{ product.emoji }}</span>
+          <span class="art-sparkle sparkle-one">✦</span><span class="art-sparkle sparkle-two">✧</span>
+          {% if product.stock == 0 %}<span class="sold-out">Sold out</span>{% endif %}
+          <span class="quick-view">View details ↗</span>
+        </a>
+        <div class="product-info">
+          <div class="product-category">{{ product.get_category_display }}</div>
+          <h3><a href="{% url 'product_detail' product.slug %}">{{ product.name }}</a></h3>
+          <div class="product-bottom"><strong>₹{{ product.price|floatformat:2 }}</strong><form method="post" action="{% url 'cart_add' product.slug %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button class="add-button" type="submit" {% if product.stock == 0 %}disabled{% endif %} aria-label="Add {{ product.name }} to cart">+</button></form></div>
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty-state full-span"><div class="empty-icon">⌕</div><h3>No products found</h3><p>Try a different search term or choose another category.</p><a class="button button-dark" href="{% url 'home' %}">Clear filters</a></div>
+    {% endfor %}
+  </div>
+</section>
+<section class="newsletter container"><div class="newsletter-icon">✿</div><div><div class="eyebrow">A NOTE FROM US</div><h2>Make room for <em>little joys.</em></h2><p>This demo store is ready for your next great project idea.</p></div><a href="{% url 'register' %}" class="button button-light">Create an account <span>↗</span></a></section>
+{% endblock %}

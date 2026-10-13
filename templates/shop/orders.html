@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}My orders — Nest & Nova{% endblock %}
+{% block content %}
+<section class="container page-section narrow-section"><div class="eyebrow">YOUR SHOPPING STORY</div><h1 class="page-title">My <em>orders.</em></h1><p class="page-intro">All your Nest & Nova orders in one place.</p>
+{% if orders %}<div class="orders-list">{% for order in orders %}<article class="order-card"><div class="order-card-head"><div><span class="order-label">ORDER NUMBER</span><h2>{{ order.order_number }}</h2><small>{{ order.created_at|date:'M j, Y · g:i A' }}</small></div><span class="status-pill">{{ order.status }}</span></div><div class="order-card-items">{% for item in order.items.all %}<span>{{ item.product.emoji }} {{ item.product_name }} × {{ item.quantity }}</span>{% endfor %}</div><div class="order-card-foot"><strong>Total · ₹{{ order.total|floatformat:2 }}</strong><a class="inline-link" href="{% url 'order_success' order.order_number %}">Order details ↗</a></div></article>{% endfor %}</div>{% else %}<div class="empty-state"><div class="empty-icon">♡</div><h2>No orders just yet.</h2><p>Your next favourite is waiting to be found.</p><a class="button button-dark" href="{% url 'home' %}#shop">Start exploring <span>↗</span></a></div>{% endif %}</section>
+{% endblock %}

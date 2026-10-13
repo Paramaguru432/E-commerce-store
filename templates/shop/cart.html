@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Your Bag — Nest & Nova{% endblock %}
+{% block content %}
+<section class="container page-section narrow-section">
+  <div class="eyebrow">YOUR PICKS, ALL TOGETHER</div><h1 class="page-title">Your <em>shopping bag.</em></h1><p class="page-intro">A few good things, ready when you are.</p>
+  {% if items %}
+    <div class="cart-layout"><div class="cart-list">
+      {% for item in items %}<article class="cart-item"><a class="cart-item-art" href="{% url 'product_detail' item.product.slug %}"><span>{{ item.product.emoji }}</span></a><div class="cart-item-main"><div class="product-category">{{ item.product.get_category_display }}</div><h2><a href="{% url 'product_detail' item.product.slug %}">{{ item.product.name }}</a></h2><p class="cart-item-price">₹{{ item.product.price|floatformat:2 }}</p><div class="cart-item-actions"><form action="{% url 'cart_update' item.product.slug %}" method="post" class="quantity-form">{% csrf_token %}<label class="sr-only" for="qty-{{ item.product.id }}">Quantity for {{ item.product.name }}</label><input id="qty-{{ item.product.id }}" type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}"><button type="submit" class="text-button">Update</button></form><form action="{% url 'cart_remove' item.product.slug %}" method="post">{% csrf_token %}<button type="submit" class="remove-link">Remove</button></form></div></div><strong class="cart-line-total">₹{{ item.line_total|floatformat:2 }}</strong></article>{% endfor %}
+      <a class="inline-link continue-link" href="{% url 'home' %}#shop">← Continue shopping</a>
+    </div><aside class="order-summary"><h2>Order summary</h2><div class="summary-row"><span>Subtotal</span><strong>₹{{ total|floatformat:2 }}</strong></div><div class="summary-row"><span>Delivery</span><strong class="free-label">FREE</strong></div><div class="summary-row summary-total"><span>Total</span><strong>₹{{ total|floatformat:2 }}</strong></div><p class="summary-note">Delivery and taxes are included for this demo.</p><a class="button button-dark button-wide" href="{% url 'checkout' %}">Continue to checkout <span>↗</span></a><div class="secure-note">♡ &nbsp; Your bag is saved in this browser session.</div></aside></div>
+  {% else %}<div class="empty-state cart-empty"><div class="empty-icon">♡</div><h2>Your bag is taking a little break.</h2><p>When you find something you love, it will show up here.</p><a class="button button-dark" href="{% url 'home' %}#shop">Explore products <span>↗</span></a></div>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: simple-ecommerce-store
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn store.wsgi:application
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        sync: false

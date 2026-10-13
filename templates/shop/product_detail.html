@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — Nest & Nova{% endblock %}
+{% block content %}
+<div class="container breadcrumbs"><a href="{% url 'home' %}">Home</a><span>›</span><span>{{ product.name }}</span></div>
+<section class="container detail-layout">
+  <div class="detail-art"><div class="detail-art-circle"></div><span class="detail-emoji">{{ product.emoji }}</span><span class="detail-art-caption">A LITTLE JOY, EVERY DAY</span>{% if product.featured %}<span class="product-badge">OUR PICK</span>{% endif %}</div>
+  <div class="detail-copy"><div class="eyebrow">{{ product.get_category_display }} <span class="star-rating">★★★★★</span></div><h1>{{ product.name }}</h1><div class="detail-price">₹{{ product.price|floatformat:2 }}</div><p class="detail-description">{{ product.description }}</p>
+    <div class="stock-line {% if product.stock == 0 %}stock-empty{% endif %}"><span class="stock-dot"></span>{% if product.stock > 0 %}In stock · {{ product.stock }} available{% else %}Currently out of stock{% endif %}</div>
+    {% if product.stock > 0 %}<form class="detail-add-form" method="post" action="{% url 'cart_add' product.slug %}">{% csrf_token %}<label for="quantity">Quantity</label><input id="quantity" type="number" name="quantity" min="1" max="{{ product.stock }}" value="1"><button class="button button-dark" type="submit">Add to bag <span>↗</span></button></form>{% endif %}
+    <div class="detail-perks"><div><span>↗</span><p><strong>Easy ordering</strong><small>Simple checkout flow</small></p></div><div><span>♡</span><p><strong>Pay on delivery</strong><small>Demo payment option</small></p></div></div>
+  </div>
+</section>
+{% if related_products %}<section class="container related-section"><div class="section-heading"><div><div class="eyebrow">YOU MAY ALSO LIKE</div><h2>More good <em>finds.</em></h2></div><a class="inline-link" href="{% url 'home' %}#shop">Shop everything ↗</a></div><div class="product-grid">{% for product in related_products %}<article class="product-card"><a class="product-art" href="{% url 'product_detail' product.slug %}"><span class="product-emoji">{{ product.emoji }}</span><span class="quick-view">View details ↗</span></a><div class="product-info"><div class="product-category">{{ product.get_category_display }}</div><h3><a href="{% url 'product_detail' product.slug %}">{{ product.name }}</a></h3><div class="product-bottom"><strong>₹{{ product.price|floatformat:2 }}</strong><form method="post" action="{% url 'cart_add' product.slug %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button class="add-button" type="submit" {% if product.stock == 0 %}disabled{% endif %}>+</button></form></div></div></article>{% endfor %}</div></section>{% endif %}
+{% endblock %}
